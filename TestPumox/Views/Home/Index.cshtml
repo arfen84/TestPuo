@@ -1,0 +1,299 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+    var diagonalArray;
+    var ramArray;
+    var memoryArray;
+    var bateryArray;
+    var resolutionArray;
+    var modelName;
+    var viewTypeClass = "disp";
+    //get data after filter
+    function DisplayAjax() {
+        $.ajax({
+            url: "/Home/LoadData",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                name: modelName,
+                resolutions: resolutionArray,
+                diagonalA: diagonalArray[0].toString().replace(".", ","),
+                diagonalB: diagonalArray[1].toString().replace(".", ","),
+                ramA: ramArray[0],
+                ramB: ramArray[1],
+                memoryA: memoryArray[0],
+                memoryB: memoryArray[1],
+                bateryA: bateryArray[0],
+                bateryB: bateryArray[1]
+            },
+            success: function (response) {
+
+                var json = $.parseJSON(response);
+                Display(json);
+            },
+            error: function (response) {
+
+            }
+        });
+    }
+    //display data from ajax response
+    function Display(json) {
+        $('#results').html("");
+        var counter = 0;
+        $(json).each(function (i, val) {
+            $('#results').append('<div class="col ' + viewTypeClass + '"><img class="img-fluid" src="./smartPhone.jpg" style="float:left;margin-right:5px;"/>' +
+                '<div style=""><span style="font-weight:bold;">' + val.Name + '</span><br>' +
+                '<div class="half"><i class="material-icons">mobile_friendly</i >' + val.Diagonal + '&#8243;<br><i class="material-icons">memory</i >' + val.Ram + ' MB<br><i class="material-icons">battery_full</i >' + val.Batery + ' mAh</div>' +
+                '<div class="half"><i class="material-icons">fullscreen</i >' + val.Resolution + ' px<br><i class="material-icons">android</i >' + val.System + '<br><i class="material-icons">sd_storage</i >' + val.Memory + ' GB</div></div></div > ');
+            counter++;
+        });
+        $('#count').html("").append('<div class="col">Znaleziono ' + counter.toString() + ' wyników</div>');
+    }
+    //return only unique data from array
+    function unique(list) {
+        var result = [];
+        $.each(list, function (i, e) {
+            if ($.inArray(e, result) == -1) result.push(e);
+        });
+        return result;
+    }
+
+    $(document).ready(function () {
+        var models = new Array();
+
+        //main ajax data load (first load)
+        $.ajax({
+            url: "/Home/LoadData",
+            type: "POST",
+            dataType: 'json',
+            data: {},
+            success: function (response) {
+                var json = $.parseJSON(response);
+                Display(json);
+                var diagonalValues = new Array();
+                var ramValues = new Array();
+                var memoryValues = new Array();
+                var bateryValues = new Array();
+                var resolutionValues = new Array();
+                $(json).each(function (i, val) {
+                    models.push(val.Name);
+                    diagonalValues.push(val.Diagonal);
+                    if (val.Ram != 0)
+                        ramValues.push(val.Ram);
+                    if (val.Memory != 0)
+                        memoryValues.push(val.Memory);
+                    if (val.Batery != 0)
+                        bateryValues.push(val.Batery);
+                    if (val.Batery != '')
+                        resolutionValues.push(val.Resolution);
+                });
+                var minValue = Math.min.apply(Math, diagonalValues);
+                var maxValue = Math.max.apply(Math, diagonalValues);
+                var diagonalArrayTemp = new Array();
+                diagonalArrayTemp.push(minValue); diagonalArrayTemp.push(maxValue);
+                diagonalArray = diagonalArrayTemp;
+                Diagonal(minValue, maxValue);
+                minValue = Math.min.apply(Math, ramValues);
+                maxValue = Math.max.apply(Math, ramValues)
+                var ramArrayTemp = new Array();
+                ramArrayTemp.push(minValue); ramArrayTemp.push(maxValue);
+                ramArray = ramArrayTemp;
+                Ram(minValue, maxValue);
+                minValue = Math.min.apply(Math, memoryValues);
+                maxValue = Math.max.apply(Math, memoryValues)
+                var memoryArrayTemp = new Array();
+                memoryArrayTemp.push(minValue); memoryArrayTemp.push(maxValue);
+                memoryArray = memoryArrayTemp;
+                Memory(minValue, maxValue);
+                minValue = Math.min.apply(Math, bateryValues);
+                maxValue = Math.max.apply(Math, bateryValues)
+                var bateryArrayTemp = new Array();
+                bateryArrayTemp.push(minValue); bateryArrayTemp.push(maxValue);
+                bateryArray = bateryArrayTemp;
+                Batery(minValue, maxValue);
+                var resolValues = unique(resolutionValues);
+                Resolution(resolValues);
+                viewTypeClass = "disp";
+                resolutionArray = resolValues;
+            },
+            error: function (response) {
+
+            }
+        });
+        //make diagonal slider on div
+        function Diagonal(minValue, maxValue) {
+            $("#diagonal").slider({
+                range: true,
+                min: minValue,
+                max: maxValue,
+                values: [minValue, maxValue],
+                step: 0.1,
+                slide: function (event, ui) {
+                    $("#diag").text(ui.values[0] + " - " + ui.values[1]);
+                },
+                change: function (event, data) {
+                    diagonalArray = data.values;
+                    DisplayAjax();
+                }
+            });
+            $("#diag").text(minValue + " - " + maxValue);
+        }
+        //make ram slider on div
+        function Ram(minValue, maxValue) {
+            $("#ram").slider({
+                range: true,
+                min: minValue,
+                max: maxValue,
+                values: [minValue, maxValue],
+                step: 8,
+                slide: function (event, ui) {
+                    $("#ramMemory").text(ui.values[0] + " - " + ui.values[1]);
+                },
+                change: function (event, data) {
+                    ramArray = data.values;
+                    DisplayAjax();
+                }
+            });
+            $("#ramMemory").text(minValue + " - " + maxValue);
+        }
+        //make memory slider on div
+        function Memory(minValue, maxValue) {
+            $("#memory").slider({
+                range: true,
+                min: minValue,
+                max: maxValue,
+                values: [minValue, maxValue],
+                step: 1,
+                slide: function (event, ui) {
+                    $("#memo").text(ui.values[0] + " - " + ui.values[1]);
+                },
+                change: function (event, data) {
+                    memoryArray = data.values;
+                    DisplayAjax();
+                }
+            });
+            $("#memo").text(minValue + " - " + maxValue);
+        }
+        //make batery slider on div
+        function Batery(minValue, maxValue) {
+            $("#batery").slider({
+                range: true,
+                min: minValue,
+                max: maxValue,
+                values: [minValue, maxValue],
+                step: 100,
+                slide: function (event, ui) {
+                    $("#bat").text(ui.values[0] + " - " + ui.values[1]);
+                },
+                change: function (event, data) {
+                    bateryArray = data.values;
+                    DisplayAjax();
+                }
+            });
+            $("#bat").text(minValue + " - " + maxValue);
+        }
+        //add resolutions checkboxes in div
+        function Resolution(resolutions) {
+            var i = 1;
+            $(resolutions).each(function (i, val) {
+                $("#resolutions").append('<div class="col dispInput"><input type="checkbox" id="resolution' + i.toString() + '" name="resolution" value="' + val + '"></input><label for="resolution' + i.toString() + '" >' + val + '</label></div>');
+                i++;
+            });
+            $("#resolutions").find("input").click(function () {
+                resolutionArray = new Array();
+                $("input:checkbox[name=resolution]:checked").each(function () {
+                    resolutionArray.push($(this).val());
+                });
+                DisplayAjax();
+            });
+        }
+        //change view to diagram
+        $('#diagram').click(function () {
+            $('.dispFull').toggleClass('disp');
+            $('.dispFull').toggleClass('dispFull');
+            viewTypeClass = "disp";
+        });
+        //change view to list
+        $('#list').on('click', function () {
+            $('.disp').toggleClass('dispFull');
+            $('.disp').toggleClass('disp');
+            viewTypeClass = "dispFull";
+        });
+        //autocomplete hints
+        $("#model").autocomplete({
+            source: models,
+            change: function () {
+                modelName = $(this).val();
+                DisplayAjax();
+            }
+        });
+        //sidebar collapse effect
+        $('#sidebarCollapse').on('click', function () {
+            $('#left').toggleClass('hide');
+            $('#right').toggleClass('hide');
+            $('#menu').toggleClass('hidden');
+            $('#menu').toggleClass('coli');
+            $('#content').toggleClass('marg');
+        });
+    }); //end of document load
+</script>
+
+<div class="container-fluid">
+    <div class="row ">
+        <div id="menu" class="coli">
+            <nav id="sidebar">
+
+                <label for="diag">Nazwa modelu</label>
+                <input id="model" type="text" /><br />
+
+                <label>Przekątna ekranu</label>
+                <div id="diagonal"></div>
+                <label type="text" id="diag"> </label><br />
+
+                <label>Pamięć RAM</label>
+                <div id="ram"></div>
+                <label type="text" id="ramMemory"> </label><br />
+
+                <label>Pamięć wewnętrzna</label>
+                <div id="memory"></div>
+                <label type="text" id="memo"> </label><br />
+
+                <label>Pojemność baterii</label>
+                <div id="batery"></div>
+                <label type="text" id="bat"> </label><br />
+
+                <label>Rozdzielczość ekranu</label>
+                <div id="resolutions"></div>
+
+                <div id="left-button" class="button-left hide-mobile">
+                    <span>
+                        <button type="button" id="sidebarCollapse">
+                            <i id="left" class="material-icons"> chevron_left</i>
+                            <i id="right" class="material-icons hide"> chevron_right</i>
+                        </button>
+                    </span>
+                </div>
+            </nav>
+        </div>
+
+        <div id="content" class="col basic-marg marg ">
+            <div class="row" style="margin:0px;width:97%;">
+                <div id="count" class="col-md-10" style="padding:0px;"></div>
+                <div class="col-md-2 float-right hide-mobile" >
+                    <a href="#" id="list" style="color:#1f98f3;"><i class="material-icons float-right">format_align_justify</i></a>
+                    <a href="#" id="diagram" style="color:#1f98f3;"><i class="material-icons float-right">view_comfy</i></a>
+                    
+
+                </div>
+            </div>
+            <div id="results" class="col">
+            </div>
+        </div>
+    </div>
+</div>
+

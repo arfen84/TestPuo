@@ -1,0 +1,11 @@
+C:\Users\pc\source\repos\TestPumox\TestPumox\bin\Debug\netcoreapp2.0\TestPumox.deps.json
+C:\Users\pc\source\repos\TestPumox\TestPumox\bin\Debug\netcoreapp2.0\TestPumox.runtimeconfig.json
+C:\Users\pc\source\repos\TestPumox\TestPumox\bin\Debug\netcoreapp2.0\TestPumox.runtimeconfig.dev.json
+C:\Users\pc\source\repos\TestPumox\TestPumox\bin\Debug\netcoreapp2.0\TestPumox.dll
+C:\Users\pc\source\repos\TestPumox\TestPumox\bin\Debug\netcoreapp2.0\TestPumox.pdb
+C:\Users\pc\source\repos\TestPumox\TestPumox\obj\Debug\netcoreapp2.0\TestPumox.csprojResolveAssemblyReference.cache
+C:\Users\pc\source\repos\TestPumox\TestPumox\obj\Debug\netcoreapp2.0\TestPumox.csproj.CoreCompileInputs.cache
+C:\Users\pc\source\repos\TestPumox\TestPumox\obj\Debug\netcoreapp2.0\TestPumox.AssemblyInfoInputs.cache
+C:\Users\pc\source\repos\TestPumox\TestPumox\obj\Debug\netcoreapp2.0\TestPumox.AssemblyInfo.cs
+C:\Users\pc\source\repos\TestPumox\TestPumox\obj\Debug\netcoreapp2.0\TestPumox.dll
+C:\Users\pc\source\repos\TestPumox\TestPumox\obj\Debug\netcoreapp2.0\TestPumox.pdb
